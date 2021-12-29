@@ -24,7 +24,7 @@ fn get_function(
 }
 
 fn find_bounds(points: &[(f64, f64)]) -> ((f64, f64), (f64, f64)) {
-    //                    omega delta   omega delta
+    //                        omega delta   omega delta
     let (mut min, mut max) = ((None, None), (None, None));
     for i in points.iter() {
         if min.0.is_none() || *min.0.as_ref().unwrap() > i.0 {
@@ -40,9 +40,11 @@ fn find_bounds(points: &[(f64, f64)]) -> ((f64, f64), (f64, f64)) {
             max.1 = Some(i.1);
         }
     }
+    let min = (min.0.unwrap(), min.1.unwrap());
+    let max = (max.0.unwrap(), max.1.unwrap());
     (
-        (min.0.unwrap() - 0.2f64, min.1.unwrap() - 0.2f64),
-        (max.0.unwrap() + 0.2f64, max.1.unwrap() + 0.2f64),
+        (-0.1f64 * min.0.abs(), -0.1f64 * min.1.abs()),
+        (max.0 + 0.1f64 * max.0.abs(), max.1 + 0.1f64 * max.1.abs()),
     )
 }
 
@@ -75,7 +77,7 @@ fn main() {
         .y_label_area_size(30u32)
         .build_cartesian_2d(0f64..PI, 0.45f64..1.75f64)
         .unwrap();
-    chart.configure_mesh().draw();
+    chart.configure_mesh().x_desc("x").y_desc("f(x)").draw();
     chart
         .draw_series(LineSeries::new(noizy_plot.clone(), &RED))
         .unwrap()
@@ -103,22 +105,30 @@ fn main() {
     let mut chart = ChartBuilder::on(&task1_coeffs)
         .margin(20u32)
         .x_label_area_size(30u32)
-        .y_label_area_size(30u32)
+        .y_label_area_size(60u32)
         .build_cartesian_2d(min.0..max.0, min.1..max.1)
         .unwrap();
-    chart.configure_mesh().draw();
+    chart.configure_mesh().x_desc("ω").y_desc("Δ").draw();
     chart.draw_series(
         filtered_3_coeffs
             .iter()
             .map(|coord| Circle::new(coord.clone(), 3u32, &BLUE)),
     );
+    chart.draw_series(
+        [(0f64, 0f64)]
+            .iter()
+            .map(|coord| Circle::new(coord.clone(), 3u32, &RED)),
+    );
 
     let task2 = BitMapBackend::new("./task2.png", (1000, 1000)).into_drawing_area();
     task2.fill(&WHITE);
     let mut chart = ChartBuilder::on(&task2)
+        .margin(20u32)
+        .x_label_area_size(30u32)
+        .y_label_area_size(30u32)
         .build_cartesian_2d(0f64..PI, 0.45f64..1.75f64)
         .unwrap();
-    chart.configure_mesh().draw();
+    chart.configure_mesh().x_desc("x").y_desc("f(x)").draw();
     chart
         .draw_series(LineSeries::new(noizy_plot, &RED))
         .unwrap()
@@ -146,13 +156,18 @@ fn main() {
     let mut chart = ChartBuilder::on(&task2_coeffs)
         .margin(20u32)
         .x_label_area_size(30u32)
-        .y_label_area_size(30u32)
+        .y_label_area_size(60u32)
         .build_cartesian_2d(min.0..max.0, min.1..max.1)
         .unwrap();
-    chart.configure_mesh().draw();
+    chart.configure_mesh().x_desc("ω").y_desc("Δ").draw();
     chart.draw_series(
         filtered_5_coeffs
             .iter()
             .map(|coord| Circle::new(coord.clone(), 3u32, &BLUE)),
+    );
+    chart.draw_series(
+        [(0f64, 0f64)]
+            .iter()
+            .map(|coord| Circle::new(coord.clone(), 3u32, &RED)),
     );
 }

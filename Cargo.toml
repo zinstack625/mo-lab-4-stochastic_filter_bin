@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 plotters = "^0.3.1"
 rand = "^0.8.4"
-stochastic_filter = { path = "../stochastic_filter" }
+stochastic_filter = { git = "https://github.com/zinstack625/mo-lab-5-stochastic_filter" }
